@@ -11,24 +11,48 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="{{asset('js/JS_Validation.js')}}"></script>
+
     <script type="text/javascript">
-        function insertBlog()
-        {
-            alert('Hello');
-            let _token = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                type:'POST',
-                url:'/insertBlog',
-               // data:"_token=<?php echo csrf_token() ?>",
-               data:{"_token":_token,
-                    "title":"I am the Best"},
-                success:function(data)
-                {
-                    alert('Called Successfully');
-                    console.log(data.msg);
-                }
+        $(document).ready(function(){
+                $("#title").blur(function(){
+                                var title = document.getElementById("title").value;
+                                checkNull_OnlyText_WithSpace(title,"title_error","blog title");
+                                });
+
+                $("#blogContent").blur(function(){
+                                var title = document.getElementById("blogContent").value;
+                                checkNull_OnlyText_WithSpace(title,"blogContent_error","blog content");
+                                });
             });
-        }
+
+            function insertBlog()
+            {
+                var title = document.getElementById("title").value;
+                var blogContent = document.getElementById("blogContent").value;
+
+                //Validations Start
+                var IsError = false;
+                IsError = checkNull_OnlyText_WithSpace(title,"title_error","Title");
+                IsError = checkNull_OnlyText_WithSpace(blogContent,"blogContent_error","Blog Content");
+                if(IsError == true)
+                    return;
+                //Validations End
+
+                let _token = $('meta[name="csrf-token"]').attr('content');
+                $.post({
+                    url:'/insertBlog',
+                // data:"_token=<?php echo csrf_token() ?>",
+                data:{"_token":_token,
+                        "title":title,
+                        "blogContent":blogContent},
+                    success:function(data)
+                    {
+                        alert(data.msg);
+                        console.log(data.msg);
+                    }
+                });
+            }
     </script>
 </head>
 
@@ -76,10 +100,11 @@
                     <h4 class="modal-title">Modal Header</h4>
                 </div>
                 <div class="modal-body">
-
-                    <input type="text" name="title" class="form-control" placeholder="Enter Title" />
+                    <input type="text" id="title" class="form-control" placeholder="Enter Title" />
+                    <label id="title_error"></label>
                     <br>
-                    <textarea class="form-control" name="blogContent" rows="5" cols="35"></textarea>
+                    <textarea class="form-control" id="blogContent" rows="5" cols="35"></textarea>
+                    <label id="blogContent_error"></label>
                     <br>
                     <input type="file" name="bimg" />
                     <br>
