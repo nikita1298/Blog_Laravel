@@ -12,3 +12,15 @@ function checkNull_OnlyText_WithSpace(Text, ErrorId, FieldName) {
     }
     return Errors;
 }
+
+function showLoader() {
+    $("#b").attr("disabled", "disabled");
+    $("#Loader").show();
+    // $("#Loader").html('<span class="well">Loading...</span>');
+}
+
+function hideLoader() {
+    $("#b").attr("Enabled", "Enabled");
+    $("#Loader").hide();
+    //  $("#Loader").html('');
+}

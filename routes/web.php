@@ -31,6 +31,10 @@ Route::get('/Registeration', function () {
 Route::get('/Login', function () {
     return view('Login');
 });
+Route::get('/ViewBlog', function () {
+    return view('ViewBlog');
+});
+
 
 Route::resource('/BlogController', 'BlogController');
 

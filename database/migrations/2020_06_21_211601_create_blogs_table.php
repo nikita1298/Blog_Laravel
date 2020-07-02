@@ -15,7 +15,7 @@ class CreateBlogsTable extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('user_id'); 
             $table->text('image');
             $table->text('content');
             $table->foreign('user_id')->references('id')->on('users');

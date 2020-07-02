@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Blogs;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class BlogController extends Controller
 {
@@ -13,6 +15,11 @@ class BlogController extends Controller
      */
     public function index()
     {
+        $usr = session('User');
+        $usr = $usr[0]->id;
+        echo $usr;
+        //print_r($usr);
+
         return session('User');
     }
 
@@ -34,8 +41,37 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        return response()->json(array('msg'=>'Hey, '.$request->title),200);
+        if(isset($request))
+        {
+            $Blog  = new Blogs();
+            $bimg = $request->file('file');
+
+            //SESSION CAPPING            
+            $user = session('User');  //$_SESSION['User']['id'];
+            $userid = $user[0]->id;
+            $user = User::findOrFail($userid);
+            
+            //FILE UPLOAD
+            $path = public_path().'/BlogImg/'.$request->title.'_'.$userid;
+            if(!File::isDirectory($path)){
+                 File::makeDirectory($path, 0777, true, true);
+            }
+            $bimg->move($path,$bimg->getClientOriginalName());
+
+            //SAVE BLOG DETAILS
+            $Blog->title = $request->title;
+            $Blog->content = $request->blogContent;
+            $Blog->image = $bimg->getClientOriginalName();
+            //$Blog->user_id = $userid;
+            $user->addBlog()->save($Blog);
+            
+            return response()->json(array('msg'=>'Hey,True '.$userid.'--'.$Blog),200);
+        }
+        else
+        {
+            return response()->json(array('msg'=>'Please Fill up all Details '.$request->title),200);
+        }
+
     }
 
     /**
